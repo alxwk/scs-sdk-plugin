@@ -1,5 +1,56 @@
 # Changelog
 
+## Rev 12, Update 1
+
+- fix: add check to avoid a race condition when converting the data
+
+## Rev 12, former Rev 11 Update 1
+
+Change version to 12, because of offset changes. This leads to a rev change and not just an update like it was before. 
+
+### Important Changes
+
+- added trailer wearBody, see changes on the telemetry. It is placed after the other wear-values in the trailer
+  
+### New Values
+
+- Trailer wear body
+- multiplayer time offset
+
+## Rev 11 (coming early due to some changes)
+
+### Important Changes
+
+- most of the flags for events will now be flip indicator. 
+  - Old Way: true -> event fires, after short time flag is changed to false
+  - New Way: state change -> event fires, state unchange -> no event
+- so the event itself does not change, however, the indicator flag change
+
+### Other things
+
+- some minor code changes
+- rev change to 11
+- changes from **Rev Pre 11**
+- `newTimestamp` of the `TelemetryData`-Event is deprecated and will be removed in a later release 
+
+## Rev Pre 11
+
+- update .net Version to 4.8
+- update C++ Platform Tools to v142
+- update sdk to 1.13, remove old sdks, current sdk is now placed in `scs_sdk` instead of `scs_sdk_{version}`
+  - Only a few changes: 5 new Truck values (see below)
+- update readme.md
+### New Values
+
+- Hazard Warning (Ets2/ATS 1.41)
+- Differential Lock (Ets2/ATS 1.41)
+- Lift Axle and Indicator, Trailer Lift Axle and Indicator (Ets2/ATS 1.41)
+
+### Shared Memory Changes
+
+- 5th Zone added `lightHazard` after `lightsReverse`, changing offset of the following 7 values
+- 5th Zone added the differential lock and lift axle values (5 new values). Placed after `shifterToggle`, changing offset of the following 2 values
+
 ## Rev 10 Update 7
 
 - fix (again) of the `onJob`, `jobFinished` flag when `jobDelivered` and `jobChancelled` happens. (see Rev 10 Update 5)

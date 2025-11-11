@@ -12,11 +12,11 @@
 #include "amtrucks/scssdk_telemetry_ats.h"
 
 // Plug-in
+#include "log.hpp"
 #include "scs-telemetry-common.hpp"
 #include "sharedmemory.hpp"
 #include "scs_config_handlers.hpp"
 #include "scs_gameplay_event_handlers.hpp"
-#include <log.hpp>
 #include <cstring>
 
 #define UNUSED(x)
@@ -377,10 +377,9 @@ static auto start_fuel = 0.0f;
 
 // Function: telemetry_frame_start
 // Register telemetry values
-SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *const event_info,
-                                  scs_context_t UNUSED(context)) {
-
+SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *const event_info, scs_context_t UNUSED(context)) {
     const auto info = static_cast<const scs_telemetry_frame_start_t *>(event_info);
+
     // The following processing of the timestamps is done so the output
     // from this plugin has continuous time, it is not necessary otherwise.
 
@@ -390,9 +389,11 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *c
     if (last_timestamp == static_cast<scs_timestamp_t>(-1)) {
         last_timestamp = info->paused_simulation_time;
     }
+
     if (last_simulatedtimestamp == static_cast<scs_timestamp_t>(-1)) {
         last_simulatedtimestamp = info->simulation_time;
     }
+
     if (last_rendertimestamp == static_cast<scs_timestamp_t>(-1)) {
         last_rendertimestamp = info->render_time;
     }
@@ -444,7 +445,7 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *c
             telem_ptr->special_b.refuel = false;
         }
 
-        // refuel is true, but engine is now active? than refuel is finished and payed, fire event   
+        // refuel is true, but engine is now active? than refuel is finished and paid, fire event
         if (refuel && telem_ptr->truck_b.engineEnabled) {
             refuel = false;
 
@@ -856,16 +857,12 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     // Set Game ID 
     if (strcmp(version_params->common.game_id, SCS_GAME_ID_EUT2) == 0) {
         telem_ptr->scs_values.game = ETS2;
-        telem_ptr->scs_values.telemetry_version_game_major = SCS_GET_MAJOR_VERSION(
-                SCS_TELEMETRY_EUT2_GAME_VERSION_CURRENT);
-        telem_ptr->scs_values.telemetry_version_game_minor = SCS_GET_MINOR_VERSION(
-                SCS_TELEMETRY_EUT2_GAME_VERSION_CURRENT);
+        telem_ptr->scs_values.telemetry_version_game_major = SCS_GET_MAJOR_VERSION(SCS_TELEMETRY_EUT2_GAME_VERSION_CURRENT);
+        telem_ptr->scs_values.telemetry_version_game_minor = SCS_GET_MINOR_VERSION(SCS_TELEMETRY_EUT2_GAME_VERSION_CURRENT);
     } else if (strcmp(version_params->common.game_id, SCS_GAME_ID_ATS) == 0) {
         telem_ptr->scs_values.game = ATS;
-        telem_ptr->scs_values.telemetry_version_game_major = SCS_GET_MAJOR_VERSION(
-                SCS_TELEMETRY_ATS_GAME_VERSION_CURRENT);
-        telem_ptr->scs_values.telemetry_version_game_minor = SCS_GET_MINOR_VERSION(
-                SCS_TELEMETRY_ATS_GAME_VERSION_CURRENT);
+        telem_ptr->scs_values.telemetry_version_game_major = SCS_GET_MAJOR_VERSION(SCS_TELEMETRY_ATS_GAME_VERSION_CURRENT);
+        telem_ptr->scs_values.telemetry_version_game_minor = SCS_GET_MINOR_VERSION(SCS_TELEMETRY_ATS_GAME_VERSION_CURRENT);
     } else {
         // unknown game
 
@@ -1064,43 +1061,42 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
             REGISTER_CHANNEL_TRAILER(i, world.placement, dplacement, telem_ptr->trailer.trailer[i].com_dp.worldX);
 
             REGISTER_CHANNEL_TRAILER(i, velocity.linear, fvector, telem_ptr->trailer.trailer[i].com_fv.linearVelocityX);
-            REGISTER_CHANNEL_TRAILER(i, velocity.angular, fvector,
-                                     telem_ptr->trailer.trailer[i].com_fv.angularVelocityX);
-            REGISTER_CHANNEL_TRAILER(i, acceleration.linear, fvector,
-                                     telem_ptr->trailer.trailer[i].com_fv.linearAccelerationX
-            );
-            REGISTER_CHANNEL_TRAILER(i, acceleration.angular, fvector,
-                                     telem_ptr->trailer.trailer[i].com_fv.angularAccelerationX
-            );
+            REGISTER_CHANNEL_TRAILER(i, velocity.angular, fvector, telem_ptr->trailer.trailer[i].com_fv.angularVelocityX);
+            REGISTER_CHANNEL_TRAILER(i, acceleration.linear, fvector, telem_ptr->trailer.trailer[i].com_fv.linearAccelerationX);
+            REGISTER_CHANNEL_TRAILER(i, acceleration.angular, fvector, telem_ptr->trailer.trailer[i].com_fv.angularAccelerationX);
 
             REGISTER_CHANNEL_TRAILER(i, wear.chassis, float, telem_ptr->trailer.trailer[i].com_f.wearChassis);
             REGISTER_CHANNEL_TRAILER(i, wear.wheels, float, telem_ptr->trailer.trailer[i].com_f.wearWheels);
-            for (auto j = scs_u32_t(0); j < WHEEL_SIZE; j++) {
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.suspension.deflection, float,
-                                               telem_ptr->trailer.trailer[i].com_f.wheelSuspDeflection[j], j);
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.on_ground, bool,
-                                               telem_ptr->trailer.trailer[i].com_b.wheelOnGround[j], j
-                );
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.substance, u32,
-                                               telem_ptr->trailer.trailer[i].com_ui.wheelSubstance[j], j
-                );
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.angular_velocity, float,
-                                               telem_ptr->trailer.trailer[i].com_f.wheelVelocity[j], j
-                );
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.steering, float,
-                                               telem_ptr->trailer.trailer[i].com_f.wheelSteering[j], j
-                );
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.rotation, float,
-                                               telem_ptr->trailer.trailer[i].com_f.wheelRotation[j], j
-                );
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.lift, float, telem_ptr->trailer.trailer[0].com_f.wheelLift[j],
-                                               j);
-                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.lift.offset, float,
-                                               telem_ptr->trailer.trailer[0].com_f.wheelLiftOffset[j], j);
 
+            for (auto j = scs_u32_t(0); j < WHEEL_SIZE; j++) {
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.suspension.deflection, float, telem_ptr->trailer.trailer[i].com_f.wheelSuspDeflection[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.on_ground, bool, telem_ptr->trailer.trailer[i].com_b.wheelOnGround[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.substance, u32, telem_ptr->trailer.trailer[i].com_ui.wheelSubstance[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.angular_velocity, float, telem_ptr->trailer.trailer[i].com_f.wheelVelocity[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.steering, float, telem_ptr->trailer.trailer[i].com_f.wheelSteering[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.rotation, float, telem_ptr->trailer.trailer[i].com_f.wheelRotation[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.lift, float, telem_ptr->trailer.trailer[0].com_f.wheelLift[j], j);
+                REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.lift.offset, float, telem_ptr->trailer.trailer[0].com_f.wheelLiftOffset[j], j);
             }
         }
+    }
 
+    // new in 1.41, ets2 1.17 and ats 1.04
+    if (check_min_version(17, 4)) {
+        REGISTER_CHANNEL(TRUCK_CHANNEL_hazard_warning, bool, telem_ptr->truck_b.lightsHazard);
+        REGISTER_CHANNEL(TRUCK_CHANNEL_differential_lock, bool, telem_ptr->truck_b.differentialLock);
+        REGISTER_CHANNEL(TRUCK_CHANNEL_lift_axle, bool, telem_ptr->truck_b.liftAxle);
+        REGISTER_CHANNEL(TRUCK_CHANNEL_lift_axle_indicator, bool, telem_ptr->truck_b.liftAxleIndicator);
+        REGISTER_CHANNEL(TRUCK_CHANNEL_trailer_lift_axle, bool, telem_ptr->truck_b.trailerLiftAxle);
+        REGISTER_CHANNEL(TRUCK_CHANNEL_trailer_lift_axle_indicator, bool, telem_ptr->truck_b.trailerLiftAxleIndicator);
+    }
+
+    if (check_min_version(18, 5)) {
+        REGISTER_CHANNEL(CHANNEL_multiplayer_time_offset, s32, telem_ptr->multiplayerTimeOffset);
+
+        for (auto i = 0; i < 10; i++) {
+            REGISTER_CHANNEL_TRAILER(i, wear.body, float, telem_ptr->trailer.trailer[i].com_f.wearBody);
+        }
     }
 
     // Set the structure with defaults.

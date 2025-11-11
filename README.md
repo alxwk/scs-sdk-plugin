@@ -31,14 +31,6 @@ Installation is easy inside Euro Truck Simulator 2. Place the acquired so file i
 You will now notice that each time ETS2/ATS now starts it prompts the SDK has been activated. Unfortunately you have to press OK to this message every time, but it's a small price to pay for the added features that are possible via the SDK.
 
 ## Developers Information
-
-### Note to current changes (Rev 10 Update 4)
-
-Because the memset in the shutdown function of the c++ code seems sometimes leads to long closing times of ets2/ats this function is removed.
-That means at the moment that while the shared memory is open, closing the game will not erase the shared memory values. To identify if the sdk is loaded
-use the `SdkActive` field of the SCSTelemetry object. The Dll to Rev 10 Update 4 does not contains the fix that set the value to 0 if the game is closed.
-If you do not want to build the dll by yourself you could use the `Timestamp` field. That should be reseted when the game is started.
-
 ### Documentation (not completed at the moment)
 
 There is also an Documentation. It tells a lot about the values. An installation, build , etc. guide will also follow. Should there still be questions, feature request or other changes visit the discord server linked at the top.
@@ -53,55 +45,70 @@ This plug-in stores it's data inside a Memory Mapped File, or "Shared Memory". T
 
 Rev Numbers shows big changes on the shared memory and sometimes on the C# object. That means Rev 10 wont work with Rev 9. Doesn't matter which side is not updated. Sub Versions that you can see in changelog.md should work with small errors or completely without. The C# object is mostly not changed. Only if needed, because of new values (most of the cases) or structure changes (less the case). If this occurs i will notice that. (See changelog.md. If you directly access the shared memory you will find an overview about the changes here.)
 
-### Plugin for 1.36/SDK11
+### Plugin for 1.46/SDK1.14
 
 Lower SDK Version means there are less values / values that are zero. To get an overview which values that are look at the list at the middle of this document.
-Note to the SDK Version: SDK 11 is not the same like the sdk version of ETS2 or ATS. Both games have an own SDK version. See list under ATS.
+Note to the SDK Version: SDK 1.13 is not the same like the sdk version of ETS2 or ATS. Both games have an own SDK version. See list under ATS.
+A version number with an asterisk (e.g. 1.46*) indicates that this version is currently in open beta.
 
 ### ETS2
 
-|Game Version|SDK Version|Plugin State|
-|------------|-----------|------------|
-|1.26 and before|1.12 and before|Not Tested, could work with errors|
-|1.27 - 1.34 |1.13       |Work        |
-|1.35        |1.14       |Works|
-|1.36     |1.15        |Works, Test Version|
+| Game Version    | SDK Version     | Plugin State                       |
+| --------------- | --------------- | ---------------------------------- |
+| 1.26 and before | 1.12 and before | Not Tested, could work with errors |
+| 1.27 - 1.34     | 1.13            | Should work                        |
+| 1.35            | 1.14            | Should work                        |
+| 1.36            | 1.15            | Should work                        |
+| - 1.40          | 1.16            | Should work                        |
+| 1.41 - 1.44     | 1.17            | Should work                        |
+| 1.45 - 1.46     | 1.18            | Works, Test Version                |
+
 
 ### ATS
 
-|Game Version|SDK Version|Plugin State|
-|------------|-----------|------------|
-|1.34 and before|1.0     |Should Work |
-|1.35        |1.01       |Works|
-|1.36     |1.02        |Works, Test Version|
+| Game Version    | SDK Version | Plugin State        |
+| --------------- | ----------- | ------------------- |
+| 1.34 and before | 1.0         | Should work         |
+| 1.35            | 1.01        | Should work         |
+| 1.36            | 1.02        | Should work         |
+| - 1.40          | 1.03        | Should work         |
+| 1.41 - 1.44     | 1.04        | Should work         |
+| 1.45 - 1.46     | 1.05        | Works, Test Version |
+
 
 ### SDK VERSION AND GAME SDK VERSION
 
-|SDK VERSION|ETS2 SDK Version|ATS SDK VERSION|
-|-----------|----------------|---------------|
-|1_1        |1.07            | -             |
-|1_2        |1.08            | -             |
-|1_4        |1.10            | -             |
-|1_5        |1.12            | -             |
-|1_9        |1.13            |1.00           |
-|1_10       |1.14            |1.01           |
-|1_11       |1.15            |1.02           |
+| SDK VERSION | ETS2 SDK Version | ATS SDK VERSION |
+| ----------- | ---------------- | --------------- |
+| 1_1         | 1.07             | -               |
+| 1_2         | 1.08             | -               |
+| 1_4         | 1.10             | -               |
+| 1_5         | 1.12             | -               |
+| 1_9         | 1.13             | 1.00            |
+| 1_10        | 1.14             | 1.01            |
+| 1_11        | 1.15             | 1.02            |
+| 1_12        | 1.16             | 1.03            |
+| 1_13        | 1.17             | 1.04            |
+| 1_14        | 1.18             | 1.05            |
+
+
 
 ### Telemetry fields and the c# object
 
 The following telemetry fields are supported, structure is similar the C# object. Starting with sdk 1.10, game patch 1.35 and ETS2 1.14, ATS 1.01 code for some part of the need different versions of the sdk. The plugin handles this. If a game lower than 1.35 is used, only the values without (1.14/1.01) are possible:
 
-Edit: for better overview it is now (ETS2 SDK/ATS SDK/Game Version). I added the game version, because it is most (every) time the same and most of you doesn't now the specific Game SDK Version.
+Edit: for better overview it is now (ETS2 SDK/ATS SDK/Game Version). I added the game version, because it is the same for ats and ets2 and most of you probably doesn't know the specific Game SDK Version.
 
 Changes are marked with the <del>deleted</del> Tag.
 New stuff is marked with the <ins>inserted</ins> Tag.
 
 <pre>
 
-<strong>Game Values (V.1.10.5)</strong>:
+<strong>Game Values (V.1.11)</strong>:
 │    ├── Telemetry Timestamp (<mark>not the in-game time</mark>, only for usage in code, see documentation for more information #todo add link) (<mark>now ulong</mark>)
-│    ├── <ins>Simulation</ins> Timestamp
-│    ├── <ins>Render</ins> Timestamp
+│    ├── Simulation Timestamp
+│    ├── Render Timestamp
+│    ├── <ins>Multiplayer Time Offset</ins> (1.18/1.05/1.45)
 │    ├── Paused, game state
 │    ├── SCSGame identifier as enum, currently ets2/ats/unknown
 │    ├── GameVersion and Game Telemetry Version (major.minor)
@@ -156,6 +163,10 @@ New stuff is marked with the <ins>inserted</ins> Tag.
 │    │    ├── <strong>Current Values (Values that change a lot)</strong>:
 │    │    │    ├── Electric Enabled
 │    │    │    ├── Engine Enabled
+│    │    │    ├── LiftAxle (1.17/1.04/1.41)
+│    │    │    ├── LiftAxleIndicator (1.17/1.04/1.41)
+│    │    │    ├── TrailerLiftAxle (1.17/1.04/1.41)
+│    │    │    ├── TrailerLiftAxleIndicator (1.17/1.04/1.41)
 │    │    │    ├── <strong>Motor Values</strong>:
 │    │    │    │    ├── <strong>Gear Values</strong>:
 │    │    │    │    │    ├── HShifterSlot
@@ -213,7 +224,8 @@ New stuff is marked with the <ins>inserted</ins> Tag.
 │    │    │    │    ├── Beam High
 │    │    │    │    ├── Beacon
 │    │    │    │    ├── Brake
-│    │    │    │    └── Reverse
+│    │    │    │    ├── Reverse
+│    │    │    │    └── HazardWarningLights (1.17/1.04/1.41)
 │    │    │    ├── <strong>Wheels</strong>:
 │    │    │    │    ├── Substance
 │    │    │    │    ├── SuspDeflection
@@ -267,6 +279,7 @@ New stuff is marked with the <ins>inserted</ins> Tag.
 │    │    │    ├── Cargo (1.14/1.01/1.35)
 │    │    │    ├── Wheels
 │    │    │    └── Chassis
+│    │    │    └── <ins>Body</ins> (1.18/1.05/1.45)
 │    │    ├── Chassis (code)
 │    │    ├── Id (code)
 │    │    ├── Name
@@ -319,7 +332,7 @@ New stuff is marked with the <ins>inserted</ins> Tag.
 │    │    └── Speed Limit
 │    ├── <strong>SpecialEvents</strong>:
 │    │    ├── On Job
-│    │    ├── Job Cancelled (1.14/1.01/1.35) (may not work atm?)
+│    │    ├── Job Cancelled (1.14/1.01/1.35)
 │    │    ├── Job Delivered (1.14/1.01/1.35)
 │    │    ├── Fined (1.14/1.01/1.35)
 │    │    ├── Tollgate (1.14/1.01/1.35)
@@ -400,3 +413,9 @@ Usage: initialize a `SCSSdkClient` instance to open the mmap file, then call `up
 ### Other
 
 For other languages you need to create/find a library that can open and read MemoryMapped files. The data storage format is binary and can be found in "scs-telemetry/inc/scs-telemetry-common.hpp". The shared memory map name is "Local\SCSTelemetry". I will add some more documentary in this header later.
+
+## Upcoming Changes
+
+There will be some upcoming changes.
+One changes will probably linux support, which will using tcp on windows and linux. So shared memory would be dropped.
+Additional, also to still achieve a better performance, changes to when data will be send will be done. Currently data is partly updated and fully parsed on c# side. That will change. The c# side will not parse the full object each time when the changes going live.

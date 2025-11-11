@@ -7,7 +7,7 @@
 // - Shared memory map struct layout
 // - [..]
 
-#define PLUGIN_REVID                    10
+#define PLUGIN_REVID                    12
 
 #define ETS2                            1
 #define ATS                             2
@@ -54,7 +54,7 @@ void log_line(scs_log_type_t type, const char *text, ...);
 
 void log_line(const char *text, ...);
 
-typedef struct scsTrailer_s { // Size: 1528
+typedef struct scsTrailer_s { // Size: 1560
     //----- START OF FIRST ZONE AT OFFSET 0 -----//
     struct {
         bool wheelSteerable[16];
@@ -81,6 +81,7 @@ typedef struct scsTrailer_s { // Size: 1528
         float cargoDamage;
         float wearChassis;
         float wearWheels;
+        float wearBody;
         float wheelSuspDeflection[16];
         float wheelVelocity[16];
         float wheelSteering[16];
@@ -91,8 +92,8 @@ typedef struct scsTrailer_s { // Size: 1528
     struct {
         float wheelRadius[16];
     } con_f;
-    //----- END OF THIRD ZONE AT OFFSET 611 -----//
-    //----- START OF 4TH ZONE AT OFFSET 612 -----//
+    //----- END OF THIRD ZONE AT OFFSET 615 -----//
+    //----- START OF 4TH ZONE AT OFFSET 616 -----//
     struct {
         float linearVelocityX;
         float linearVelocityY;
@@ -115,8 +116,9 @@ typedef struct scsTrailer_s { // Size: 1528
         float wheelPositionY[16];
         float wheelPositionZ[16];
     } con_fv;
-    //----- END OF 4TH ZONE AT OFFSET 863 -----//
-    //----- START OF 5TH ZONE AT OFFSET 864 -----//
+    char buffer_fv[4];
+    //----- END OF 4TH ZONE AT OFFSET 871 -----//
+    //----- START OF 5TH ZONE AT OFFSET 872 -----//
     struct {
         double worldX;
         double worldY;
@@ -126,8 +128,8 @@ typedef struct scsTrailer_s { // Size: 1528
         double rotationZ;
     } com_dp;
 
-    //----- END OF 5TH ZONE AT OFFSET 911 -----//
-    //----- START OF 6TH ZONE AT OFFSET 912 -----//
+    //----- END OF 5TH ZONE AT OFFSET 919 -----//
+    //----- START OF 6TH ZONE AT OFFSET 920 -----//
     struct {
         char id[stringsize];
         char cargoAcessoryId[stringsize];
@@ -140,7 +142,7 @@ typedef struct scsTrailer_s { // Size: 1528
         char licensePlateCountry[stringsize];
         char licensePlateCountryId[stringsize];
     } con_s;
-    //----- END OF 6TH ZONE AT OFFSET 1527 -----//
+    //----- END OF 6TH ZONE AT OFFSET 1559 -----//
 } scsTrailer_t;
 
 /**
@@ -166,9 +168,7 @@ typedef struct scsTelemetryMap_s {
     unsigned long long time;
     unsigned long long simulatedTime;
     unsigned long long renderTime;
-
-    // to make a buffer for changes here and avoid errors later we create a empty room so we fill the first 40 fields, shrink it when you add something above here
-    char buffer[8];
+    long long multiplayerTimeOffset;
 
     //----- END OF FIRST ZONE AT OFFSET 39 -----//in
 
@@ -363,9 +363,15 @@ typedef struct scsTelemetryMap_s {
         bool lightsBeacon;
         bool lightsBrake;
         bool lightsReverse;
+        bool lightsHazard;
         bool cruiseControl; // special field not a sdk field
         bool truck_wheelOnGround[16];
         bool shifterToggle[2];
+        bool differentialLock;
+        bool liftAxle;
+        bool liftAxleIndicator;
+        bool trailerLiftAxle;
+        bool trailerLiftAxleIndicator;
     } truck_b;
 
     struct {
@@ -373,7 +379,7 @@ typedef struct scsTelemetryMap_s {
         bool jobDeliveredAutoloadUsed;
     } gameplay_b;
 
-    char buffer_b[31];
+    char buffer_b[25];
     //----- END OF FIFTH ZONE AT OFFSET 1639 -----//
 
     //----- START OF SIXTH ZONE AT OFFSET 1640 -----//
@@ -542,12 +548,12 @@ typedef struct scsTelemetryMap_s {
     //----- END OF 13TH ZONE AT OFFSET 5999 -----//
 
     //----- START OF 14TH ZONE AT OFFSET 6000 -----//
-    // The 14th zone contains values of up to 10 trailers (each have a size of 1552)
+    // The 14th zone contains values of up to 10 trailers (each have a size of 1560)
     struct {
         scsTrailer_t trailer[10];
     } trailer;
 
-    //----- END OF 14TH ZONE AT OFFSET 22420 -----//
+    //----- END OF 14TH ZONE AT OFFSET 21619 -----//
 } scsTelemetryMap_t;
 
 #endif
