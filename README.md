@@ -7,7 +7,7 @@
     <img alt="" src="https://img.shields.io/badge/Discord-blue.svg?style=for-the-badge" />
   </a>
 
-fork of [nlhans](https://github.com/nlhans/ets2-sdk-plugin) and [RenCloud](https://github.com/RenCloud/scs-sdk-plugin) work, adapted to work on Linux.
+fork of [nlhans](https://github.com/nlhans/ets2-sdk-plugin) and [RenCloud](https://github.com/RenCloud/scs-sdk-plugin) work, adapted to work on Linux by [@jackz314](https://github.com/jackz314). Merged with [@y1lichen](https://github.com/y1lichen)'s and further [@RenCloud](https://github.com/RenCloud)'s updates and cleaned up a bit by [@alxwk](https://github.com/alxwk).
 
 # SCS Telemetry for EuroTruckSimulator 2 and AmericanTruckSimulator
 
