@@ -24,19 +24,18 @@ void SharedMemory::LogError(const char *logPtr) {
     this->errReason = logPtr;
 }
 
-SharedMemory::SharedMemory(const char *newNamePtr, unsigned int size) {
-    this->mapsize = size;
-    this->namePtr = newNamePtr;
-    this->isSharedMemoryHooked = false;
+SharedMemory::SharedMemory(const char *newNamePtr, unsigned int size)
+    : namePtr(newNamePtr), mapsize(size), isSharedMemoryHooked(false)
 #ifdef SHAREDMEM_LOGGING
-    this->logFilePtr = nullptr;
+    , logFilePtr(nullptr)
 #endif
+{
     struct stat st = {0};
     if (stat("/dev/shm/SCS", &st) == -1) {
         LogError("Creating directory /dev/shm/SCS");
         mkdir("/dev/shm/SCS", 0777); // rw-rw-rw
     }else {
-        int perms = (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH);
+        const unsigned int perms = (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH);
         if((st.st_mode & perms) != perms){
 //            system("rm -rf /dev/shm/SCS");
             LogError("Changing permission of /dev/shm/SCS");

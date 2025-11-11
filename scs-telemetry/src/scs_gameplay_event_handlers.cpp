@@ -1,4 +1,4 @@
-﻿#include <cstring>
+#include <cstring>
 #include "scs_gameplay_event_handlers.hpp"
 
 // Plug-in

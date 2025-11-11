@@ -19,11 +19,11 @@
 // also it rise dll size and may have impacted on the system (loading time, etc.)
 namespace logger {
 
-
     namespace {
         // Function: s2ws
         // convert string to wchar (wstring)
-        auto s2ws(const std::string& s) -> std::wstring {
+        auto s2ws(const std::string& s) -> std::wstring
+        {
             const auto slength = static_cast<int>(s.length()) + 1;
             const auto len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, nullptr, 0);
             const auto buf = new wchar_t[len];
@@ -35,7 +35,8 @@ namespace logger {
 
         // Function: time_stamp
         // current time to string
-        auto time_stamp() -> std::string {
+        auto time_stamp() -> std::string
+        {
             const auto now = std::time(nullptr);
             char cstr[256]{};
             return std::strftime(cstr, sizeof(cstr), "%Y%m%d_%H%M%S", std::localtime(&now)) ? cstr : "";
@@ -43,7 +44,8 @@ namespace logger {
 
         // Function: exe_path
         // get current path
-        auto exe_path() -> std::string {
+        auto exe_path() -> std::string
+        {
             char buffer[248];
             GetModuleFileNameA(nullptr, buffer, 248);
             const auto pos = std::string(buffer).find_last_of("\\/");
@@ -52,10 +54,10 @@ namespace logger {
 
         // Function: path_to_session_log_file
         // get the path to the current log file
-        auto path_to_session_log_file() -> std::string {
+        auto path_to_session_log_file() -> std::string
+        {
             if (CreateDirectoryA((exe_path() + "/tmp/").c_str(), nullptr) || ERROR_ALREADY_EXISTS == GetLastError()) {
-                if (CreateDirectoryA((exe_path() + "/tmp/log/").c_str(), nullptr) || ERROR_ALREADY_EXISTS ==
-                    GetLastError()) {
+                if (CreateDirectoryA((exe_path() + "/tmp/log/").c_str(), nullptr) || ERROR_ALREADY_EXISTS == GetLastError()) {
                     static const auto log_dir = exe_path() + "/tmp/log/";
                     static const std::string log_file_name = "log.txt";
                     return log_dir + time_stamp() + '_' + log_file_name;
@@ -63,12 +65,12 @@ namespace logger {
                 return "";
             }
             return "";
-
         }
 
         // Function: directory_exists
         // check if a directory exists
-        auto directory_exists(const char* sz_path) -> bool {
+        auto directory_exists(const char* sz_path) -> bool
+        {
             const auto dw_attrib = GetFileAttributes(sz_path);
 
             return (dw_attrib != INVALID_FILE_ATTRIBUTES &&

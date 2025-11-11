@@ -11,7 +11,5 @@ namespace logger
     void flush() ;
 }
 
-
-
 #endif
 #endif

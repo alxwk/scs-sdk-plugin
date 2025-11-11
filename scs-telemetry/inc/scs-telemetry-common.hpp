@@ -46,6 +46,7 @@ bool check_max_version(unsigned const int min_ets2, unsigned const int min_ats);
 enum configType {
     substances, controls, hshifter, truck, trailer, job
 };
+
 enum gameplayType {
     cancelled, delivered, fined, tollgate, ferry, train
 };
@@ -62,20 +63,25 @@ typedef struct scsTrailer_s { // Size: 1560
         bool wheelPowered[16];
         bool wheelLiftable[16];
     } con_b;
+
     struct {
         bool wheelOnGround[16];
         bool attached;
     } com_b;
+
     char buffer_b[3];
     //----- END OF FIRST ZONE AT OFFSET 83 -----//
+
     //----- START OF SECOND ZONE AT OFFSET 84 -----//
     struct {
         unsigned int wheelSubstance[16];
     } com_ui;
+
     struct {
         unsigned int wheelCount;
     } con_ui;
     //----- END OF SECOND ZONE AT OFFSET 151 -----//
+
     //----- START OF THIRD ZONE AT OFFSET 152 -----//
     struct {
         float cargoDamage;
@@ -89,10 +95,12 @@ typedef struct scsTrailer_s { // Size: 1560
         float wheelLift[16];
         float wheelLiftOffset[16];
     } com_f;
+
     struct {
         float wheelRadius[16];
     } con_f;
     //----- END OF THIRD ZONE AT OFFSET 615 -----//
+
     //----- START OF 4TH ZONE AT OFFSET 616 -----//
     struct {
         float linearVelocityX;
@@ -108,6 +116,7 @@ typedef struct scsTrailer_s { // Size: 1560
         float angularAccelerationY;
         float angularAccelerationZ;
     } com_fv;
+
     struct {
         float hookPositionX;
         float hookPositionY;
@@ -116,8 +125,10 @@ typedef struct scsTrailer_s { // Size: 1560
         float wheelPositionY[16];
         float wheelPositionZ[16];
     } con_fv;
+
     char buffer_fv[4];
     //----- END OF 4TH ZONE AT OFFSET 871 -----//
+
     //----- START OF 5TH ZONE AT OFFSET 872 -----//
     struct {
         double worldX;
@@ -127,8 +138,8 @@ typedef struct scsTrailer_s { // Size: 1560
         double rotationY;
         double rotationZ;
     } com_dp;
-
     //----- END OF 5TH ZONE AT OFFSET 919 -----//
+
     //----- START OF 6TH ZONE AT OFFSET 920 -----//
     struct {
         char id[stringsize];
@@ -156,7 +167,7 @@ typedef struct scsTrailer_s { // Size: 1560
    */
 typedef struct scsTelemetryMap_s {
     //----- START OF FIRST ZONE AT OFFSET 0 -----//
-    // Staring with values needed to handle the data
+    // Starting with values needed to handle the data
     // display if game / sdk runs
     bool sdkActive;
     char placeHolder[3];
@@ -169,11 +180,10 @@ typedef struct scsTelemetryMap_s {
     unsigned long long simulatedTime;
     unsigned long long renderTime;
     long long multiplayerTimeOffset;
-
     //----- END OF FIRST ZONE AT OFFSET 39 -----//in
 
     //----- START OF SECOND ZONE AT OFFSET 40 -----//
-    // The Secon zone contains unsigned integers and it sorted in sub structures
+    // The Second zone contains unsigned integers and it sorted in sub structures
 
     // Contains Game independent values and plugin version
     struct {

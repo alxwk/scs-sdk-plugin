@@ -10,7 +10,6 @@
 
 typedef struct scsGameplayEventHandler_s {
     char const *id;
-
     void (*handle)(const scs_named_value_t *current);
 } scsGameplayEventHandler_t;
 
@@ -23,22 +22,15 @@ scsGameplayEventHandle(Cancelled, Penalty);
 
 // Delivered
 scsGameplayEventHandle(Delivered, Revenue);
-
 scsGameplayEventHandle(Delivered, EarnedXp);
-
 scsGameplayEventHandle(Delivered, CargoDamage);
-
 scsGameplayEventHandle(Delivered, DistanceKm);
-
 scsGameplayEventHandle(Delivered, DeliveryTime);
-
 scsGameplayEventHandle(Delivered, AutoparkUsed);
-
 scsGameplayEventHandle(Delivered, AutoloadUsed);
 
 // Fined
 scsGameplayEventHandle(Fined, FineOffence);
-
 scsGameplayEventHandle(Fined, FineAmount);
 
 // Tollgate
@@ -46,27 +38,17 @@ scsGameplayEventHandle(Tollgate, PayAmount);
 
 // Ferry
 scsGameplayEventHandle(Ferry, PayAmount);
-
 scsGameplayEventHandle(Ferry, SourceName);
-
 scsGameplayEventHandle(Ferry, TargetName);
-
 scsGameplayEventHandle(Ferry, SourceId);
-
 scsGameplayEventHandle(Ferry, TargetId);
-
 
 // Train
 scsGameplayEventHandle(Train, PayAmount);
-
 scsGameplayEventHandle(Train, SourceName);
-
 scsGameplayEventHandle(Train, TargetName);
-
 scsGameplayEventHandle(Train, SourceId);
-
 scsGameplayEventHandle(Train, TargetId);
-
 
 bool handleGpe(const scs_named_value_t *info, const gameplayType type);
 
