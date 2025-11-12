@@ -1138,10 +1138,12 @@ SCSAPI_VOID scs_telemetry_shutdown() {
         telem_ptr->renderTime = 0;
         telem_ptr->common_ui.time_abs = 0;
         telem_ptr->common_f.scale = 0;
+        telem_ptr = nullptr;
     }
 
     if (telem_mem != nullptr) {
         telem_mem->Close();
+        telem_mem = nullptr;
     }
 }
 
