@@ -1,4 +1,4 @@
-﻿#if LOGGING
+#if LOGGING
 #include <string>
 #include <ctime>
 #include "log.hpp"

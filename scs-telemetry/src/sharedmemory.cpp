@@ -8,7 +8,8 @@
 
 #include "sharedmemory.hpp"
 
-void SharedMemory::LogError(const char *logPtr) {
+void SharedMemory::LogError(const char *logPtr)
+{
 //    printf("%s", logPtr);
 #ifdef SHAREDMEM_LOGGING
     if (this->logFilePtr == nullptr)
@@ -34,7 +35,7 @@ SharedMemory::SharedMemory(const char *newNamePtr, unsigned int size)
     if (stat("/dev/shm/SCS", &st) == -1) {
         LogError("Creating directory /dev/shm/SCS");
         mkdir("/dev/shm/SCS", 0777); // rw-rw-rw
-    }else {
+    } else {
         const unsigned int perms = (S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH);
         if((st.st_mode & perms) != perms){
 //            system("rm -rf /dev/shm/SCS");
@@ -46,7 +47,7 @@ SharedMemory::SharedMemory(const char *newNamePtr, unsigned int size)
     if (hMapFile == -1) {
         chmod(newNamePtr, 0777); // rw-rw-rw
         hMapFile = open(newNamePtr, O_CREAT | O_RDWR, 0777);
-        if(hMapFile == -1){
+        if (hMapFile == -1) {
             printf("%s\n",strerror(errno));
             LogError("Unable to open mmap file");
             return;
@@ -65,11 +66,10 @@ SharedMemory::SharedMemory(const char *newNamePtr, unsigned int size)
     LogError("Opened MMF!");
 }
 
-
-void SharedMemory::Close() {
+void SharedMemory::Close()
+{
 #ifdef SHAREDMEM_LOGGING
-    if (logFilePtr != nullptr)
-    {
+    if (logFilePtr != nullptr) {
         fflush(logFilePtr);
         fclose(logFilePtr);
     }
@@ -86,5 +86,4 @@ void SharedMemory::Close() {
     }
 
     isSharedMemoryHooked = false;
-
 }

@@ -7,7 +7,6 @@
 #include "eurotrucks2/scssdk_telemetry_eut2.h"
 #include "scs-telemetry-common.hpp"
 
-
 typedef struct scsGameplayEventHandler_s {
     char const *id;
     void (*handle)(const scs_named_value_t *current);

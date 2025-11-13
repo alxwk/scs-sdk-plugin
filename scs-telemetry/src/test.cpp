@@ -7,7 +7,8 @@ const char *scs_mmf_name = SCS_PLUGIN_MMF_NAME;
 #include <sharedmemory.hpp>
 #include <iostream>
 
-int main(){
+int main()
+{
     auto telem_mem = new SharedMemory(scs_mmf_name, SCS_PLUGIN_MMF_SIZE);
     auto telem_ptr = static_cast<scsTelemetryMap_t *>(telem_mem->GetBuffer());
     telem_ptr->truck_f.speed = 12;

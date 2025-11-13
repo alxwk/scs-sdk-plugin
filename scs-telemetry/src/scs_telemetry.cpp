@@ -57,7 +57,8 @@ scs_log_t game_log = nullptr;
 
 // Function: log_line
 // Used to write to the in game console log
-void log_line(const scs_log_type_t type, const char *const text, ...) {
+void log_line(const scs_log_type_t type, const char *const text, ...)
+{
     if (!game_log) {
         return;
     }
@@ -90,15 +91,14 @@ void log_line(const char *const text, ...) {
 }
 
 // check if the version is correct
-bool check_min_version(unsigned const int min_ets2, unsigned const int min_ats) {
-
+bool check_min_version(unsigned const int min_ets2, unsigned const int min_ats)
+{
     return (telem_ptr->scs_values.game == ETS2 && telem_ptr->scs_values.version_minor >= min_ets2) ||
            (telem_ptr->scs_values.game == ATS && telem_ptr->scs_values.version_minor >= min_ats);
-
 }
 
-bool check_max_version(unsigned const int max_ets2, unsigned const int max_ats) {
-
+bool check_max_version(unsigned const int max_ets2, unsigned const int max_ats)
+{
     return (telem_ptr->scs_values.game == ETS2 && telem_ptr->scs_values.version_minor <= max_ets2) ||
            (telem_ptr->scs_values.game == ATS && telem_ptr->scs_values.version_minor <= max_ats);
 
@@ -107,10 +107,10 @@ bool check_max_version(unsigned const int max_ets2, unsigned const int max_ats) 
 // Function: log_configs
 // It print every config event that appears to the in game log
 // careful, create a lot of logs so that fast parts are not readable anymore in the log window
-void log_configs(const scs_telemetry_configuration_t *info) {
+void log_configs(const scs_telemetry_configuration_t *info)
+{
     log_line("Configuration: %s", info->id);
     for (auto current = info->attributes; current->name; ++current) {
-
         if (current->index != SCS_U32_NIL) {
             // log_line("[%u]", static_cast<unsigned>(current->index));
         }
@@ -202,16 +202,15 @@ void log_configs(const scs_telemetry_configuration_t *info) {
                 log_line(" %s unknown", current->name);
                 break;
             }
-
         }
-
     }
 }
 
 // Function: log_events
 // It print every gameplay event that appears to the in game log
 // careful, create a lot of logs so that fast parts are not readable anymore in the log window
-void log_events(const scs_telemetry_gameplay_event_t *info) {
+void log_events(const scs_telemetry_gameplay_event_t *info)
+{
     log_line("^Gameplayevents: %s", info->id);
     for (auto current = info->attributes; current->name; ++current) {
 
@@ -306,9 +305,7 @@ void log_events(const scs_telemetry_gameplay_event_t *info) {
                 log_line(" %s unknown", current->name);
                 break;
             }
-
         }
-
     }
 }
 
@@ -332,11 +329,11 @@ static auto clear_ferry_ticker = 0;
 static auto clear_train_ticker = 0;
 static auto clear_refuel_payed_ticker = 0;
 
-
 //TODO: REWORK BOTH CLEAN FUNCTION AND ADD MORE FOR SINGLE CONFIG attribute
 // Function: set_job_values_zero
 // set every job (cargo) values to 0/empty string
-void set_job_values_zero() {
+void set_job_values_zero()
+{
     telem_ptr->config_ull.jobIncome = 0;
     telem_ptr->config_ui.time_abs_delivery = 0;
     telem_ptr->config_f.cargoMass = 0;
@@ -360,11 +357,11 @@ void set_job_values_zero() {
 
 // Function: set_trailer_values_zero
 // set every trailer value 0/empty string 
-void set_trailer_values_zero(unsigned int trailer_id = 0) {
+void set_trailer_values_zero(unsigned int trailer_id = 0)
+{
     //(&telem_ptr->trailer.trailer[trailer_id])->~scsTrailer_t();
     new(&telem_ptr->trailer.trailer[trailer_id]) scsTrailer_t();
 }
-
 
 // Last Fuel Value (set to a high value to avoid to trigger the event directly on start)
 static auto fuel_ticker = 0;
@@ -377,7 +374,8 @@ static auto start_fuel = 0.0f;
 
 // Function: telemetry_frame_start
 // Register telemetry values
-SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *const event_info, scs_context_t UNUSED(context)) {
+SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *const event_info, scs_context_t UNUSED(context))
+{
     const auto info = static_cast<const scs_telemetry_frame_start_t *>(event_info);
 
     // The following processing of the timestamps is done so the output
@@ -438,7 +436,6 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *c
             if (!refuel) {
                 refuel = true;
                 clear_refuel_payed_ticker = 0;
-
             }
         } else if (current_fuel_value < last_fuel_value) {
             fuel_ticker2 = 0;
@@ -451,7 +448,6 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *c
 
             telem_ptr->gameplay_f.refuelAmount = telem_ptr->truck_f.fuel - start_fuel;
             telem_ptr->special_b.refuelPayed = true;
-
         }
 
         // update last value every few ticks (refuel rate is not constant and the plugin side did check every 25 ms so to try a
@@ -468,11 +464,9 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *c
                 fuel_ticker2 = 0;
                 telem_ptr->special_b.refuel = false;
             }
-
         }
         fuel_ticker++;
         last_fuel_value = current_fuel_value;
-
 
         //TODO: better way for that mess here
         if (telem_ptr->special_b.jobFinished) {
@@ -541,13 +535,13 @@ SCSAPI_VOID telemetry_frame_start(const scs_event_t UNUSED(event), const void *c
             }
         }
     }
-
 }
 
 // Function: telemetry_pause
 // called if the game fires the event start/pause. Used to set the paused value
 SCSAPI_VOID telemetry_pause(const scs_event_t event, const void *const UNUSED(event_info),
-                            scs_context_t UNUSED(context)) {
+                            scs_context_t UNUSED(context))
+{
 #if LOGGING
     logger::flush();
 #endif
@@ -556,8 +550,8 @@ SCSAPI_VOID telemetry_pause(const scs_event_t event, const void *const UNUSED(ev
     }
 }
 
-
-SCSAPI_VOID telemetry_gameplay(const scs_event_t event, const void *const event_info, scs_context_t UNUSED(context)) {
+SCSAPI_VOID telemetry_gameplay(const scs_event_t event, const void *const event_info, scs_context_t UNUSED(context))
+{
     //  An event called when a gameplay event such as job finish happens
     const auto info = static_cast<const scs_telemetry_gameplay_event_t *>(
             event_info);
@@ -582,7 +576,6 @@ SCSAPI_VOID telemetry_gameplay(const scs_event_t event, const void *const event_
         telem_ptr->special_b.onJob = false;
         telem_ptr->special_b.jobFinished = true;
         clear_job_ticker = 0;
-
     } else if (strcmp(info->id, SCS_TELEMETRY_GAMEPLAY_EVENT_player_fined) == 0) {
         type = fined;
         telem_ptr->special_b.fined = true;
@@ -603,28 +596,25 @@ SCSAPI_VOID telemetry_gameplay(const scs_event_t event, const void *const event_
         log_line(SCS_LOG_TYPE_warning, "Something went wrong with this gameplay event %s", info->id);
     }
 
-
     // attribute is a pointer array that is never null so ... i have no clue how to check it on another way than this
     // if for loop can't loop it is empty so simple 
     auto is_empty = true;
 
     for (auto current = info->attributes; current->name; ++current) {
-
         if (!handleGpe(current, type)) {
             // actually only for testing/debug purpose, so should there be a message in game with that line there is missed something
             log_line("attribute not handled id: %i attribute: %s", type, current->name);
         }
         is_empty = false;
     }
-
-
 }
 
 
 // Function: telemetry_configuration
 // called if the game fires the event configuration. Used to handle all the configuration values
 SCSAPI_VOID telemetry_configuration(const scs_event_t event, const void *const event_info,
-                                    scs_context_t UNUSED(context)) {
+                                    scs_context_t UNUSED(context))
+{
     // On configuration change, this function is called.
     const auto info = static_cast<const scs_telemetry_configuration_t *>(
             // TODO: DELETE ENTRIES WHEN CALLED SO NO VALUE IS THERE to avoid wrong values when changes occur but not in arrays up to that slot or so
@@ -648,7 +638,6 @@ SCSAPI_VOID telemetry_configuration(const scs_event_t event, const void *const e
             if (strcmp(info->id, SCS_TELEMETRY_CONFIG_trailer) == 0) {
                 type = trailer;
                 trailer_id = 0;
-
             } else {
                 log_line(SCS_LOG_TYPE_warning, "Something went wrong with this configuration %s", info->id);
             }
@@ -670,7 +659,6 @@ SCSAPI_VOID telemetry_configuration(const scs_event_t event, const void *const e
                 log_line(SCS_LOG_TYPE_warning, "Something went wrong with this configuration %s", info->id);
             }
         }
-
     }
 
     // uncomment to log every config, should work but with function not tested ^^`
@@ -697,12 +685,12 @@ SCSAPI_VOID telemetry_configuration(const scs_event_t event, const void *const e
         telem_ptr->special_b.onJob = true;
         telem_ptr->gameplay_ui.jobStartingTime = telem_ptr->common_ui.time_abs;
     }
-
 }
 
 /******* STORING OF SEVERAL SCS DATA TYPES *******/
 SCSAPI_VOID telemetry_store_float(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                  scs_context_t context) {
+                                  scs_context_t context)
+{
     if (!value) return;
     assert(value);
     assert(value->type == SCS_VALUE_TYPE_float);
@@ -711,7 +699,8 @@ SCSAPI_VOID telemetry_store_float(const scs_string_t name, const scs_u32_t index
 }
 
 SCSAPI_VOID telemetry_store_s32(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                scs_context_t context) {
+                                scs_context_t context)
+{
     if (!value) return;
     assert(value);
     assert(value->type == SCS_VALUE_TYPE_s32);
@@ -720,7 +709,8 @@ SCSAPI_VOID telemetry_store_s32(const scs_string_t name, const scs_u32_t index, 
 }
 
 SCSAPI_VOID telemetry_store_u32(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                scs_context_t context) {
+                                scs_context_t context)
+{
     if (!value) return;
     assert(value);
     assert(value->type == SCS_VALUE_TYPE_u32);
@@ -729,7 +719,8 @@ SCSAPI_VOID telemetry_store_u32(const scs_string_t name, const scs_u32_t index, 
 }
 
 SCSAPI_VOID telemetry_store_bool(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                 scs_context_t context) {
+                                 scs_context_t context)
+{
     if (!context) return;
     if (value) {
         if (value->value_bool.value == 0) {
@@ -743,7 +734,8 @@ SCSAPI_VOID telemetry_store_bool(const scs_string_t name, const scs_u32_t index,
 }
 
 SCSAPI_VOID telemetry_store_fvector(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                    scs_context_t context) {
+                                    scs_context_t context)
+{
     if (!value) return;
     assert(value);
     assert(value->type == SCS_VALUE_TYPE_fvector);
@@ -754,7 +746,8 @@ SCSAPI_VOID telemetry_store_fvector(const scs_string_t name, const scs_u32_t ind
 }
 
 SCSAPI_VOID telemetry_store_dplacement(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                       scs_context_t context) {
+                                       scs_context_t context)
+{
     if (!value) return;
     assert(value);
     assert(value->type == SCS_VALUE_TYPE_dplacement);
@@ -773,7 +766,8 @@ SCSAPI_VOID telemetry_store_dplacement(const scs_string_t name, const scs_u32_t 
 }
 
 SCSAPI_VOID telemetry_store_fplacement(const scs_string_t name, const scs_u32_t index, const scs_value_t *const value,
-                                       scs_context_t context) {
+                                       scs_context_t context)
+{
     if (!value) return;
     assert(value);
     assert(value->type == SCS_VALUE_TYPE_fplacement);
@@ -790,7 +784,6 @@ SCSAPI_VOID telemetry_store_fplacement(const scs_string_t name, const scs_u32_t 
     *(static_cast<float *>(context) + 5) = value->value_fplacement.orientation.roll;
 }
 
-
 /**
  * @brief Telemetry API initialization function.
  *
@@ -800,7 +793,8 @@ SCSAPI_VOID telemetry_store_fplacement(const scs_string_t name, const scs_u32_t 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_init_params_t *const params) {
+SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_init_params_t *const params)
+{
     // We currently support only two version.
     //TODO test this first test seems to work
     const scs_telemetry_init_params_v100_t *version_params;
@@ -813,7 +807,6 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     } else {
         return SCS_RESULT_unsupported;
     }
-
 
     game_log = version_params->common.log;
     if (version_params == nullptr) {
@@ -865,7 +858,6 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
         telem_ptr->scs_values.telemetry_version_game_minor = SCS_GET_MINOR_VERSION(SCS_TELEMETRY_ATS_GAME_VERSION_CURRENT);
     } else {
         // unknown game
-
         log_line(SCS_LOG_TYPE_error, "Unknown Game SDK will not work correctly");
         telem_ptr->scs_values.game = UnknownGame;
         telem_ptr->scs_values.telemetry_version_game_major = 0;
@@ -873,7 +865,6 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     }
 
     // Model & trailer type are stored in configuration event.
-
 
     /*** REGISTER GAME EVENTS (Pause/Unpause/Start/Time) ***/
     const auto events_registered =
@@ -885,9 +876,7 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     // Register configuration event, because it sends data like truck make, etc.
     version_params->register_for_event(SCS_TELEMETRY_EVENT_configuration, telemetry_configuration, nullptr);
 
-
     if (check_min_version(14, 1)) {
-
         // Register gameplay event, for event such as job finish or canceled
         version_params->register_for_event(SCS_TELEMETRY_EVENT_gameplay, telemetry_gameplay, nullptr);
         // this seems to be a constant so fetch it here? need to test this
@@ -901,7 +890,6 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     // ETS Version 1.0 - 1.13 (up to patch 1.34) and ATS Version 1.0 (up to patch 1.34) or simple SDK version 1.0
     /*** REGISTER ALL TELEMETRY CHANNELS TO OUR SHARED MEMORY MAP ***/
     REGISTER_CHANNEL(CHANNEL_game_time, u32, telem_ptr->common_ui.time_abs);
-
 
     REGISTER_CHANNEL(TRUCK_CHANNEL_speed, float, telem_ptr->truck_f.speed);
     REGISTER_CHANNEL(TRUCK_CHANNEL_local_linear_acceleration, fvector, telem_ptr->truck_fv.accelerationX);
@@ -932,7 +920,7 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     // Auxilliary stuff:
     REGISTER_CHANNEL(TRUCK_CHANNEL_retarder_level, u32, telem_ptr->truck_ui.retarderBrake);
     REGISTER_CHANNEL(TRUCK_CHANNEL_hshifter_slot, u32, telem_ptr->truck_ui.shifterSlot);
-    for (auto i = scs_u32_t(0); i < scs_u32_t(2); i++) {
+    for (auto i = scs_u32_t(0); i < scs_u32_t(2); ++i) {
         REGISTER_CHANNEL_INDEX(TRUCK_CHANNEL_hshifter_selector, bool, telem_ptr->truck_b.shifterToggle[i], i);
     }
     // Booleans
@@ -984,8 +972,7 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     REGISTER_CHANNEL(TRUCK_CHANNEL_navigation_time, float, telem_ptr->truck_f.routeTime);
     REGISTER_CHANNEL(TRUCK_CHANNEL_fuel_range, float, telem_ptr->truck_f.fuelRange);
 
-
-    for (auto i = scs_u32_t(0); i < WHEEL_SIZE; i++) {
+    for (auto i = scs_u32_t(0); i < WHEEL_SIZE; ++i) {
         REGISTER_CHANNEL_INDEX(TRUCK_CHANNEL_wheel_on_ground, bool, telem_ptr->truck_b.truck_wheelOnGround[i], i);
         REGISTER_CHANNEL_INDEX(TRUCK_CHANNEL_wheel_substance, u32, telem_ptr->truck_ui.truck_wheelSubstance[i], i);
         REGISTER_CHANNEL_INDEX(TRUCK_CHANNEL_wheel_velocity, float, telem_ptr->truck_f.truck_wheelVelocity[i], i);
@@ -1005,16 +992,10 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     REGISTER_CHANNEL(CHANNEL_local_scale, float, telem_ptr->common_f.scale);
     REGISTER_CHANNEL(TRUCK_CHANNEL_head_offset, fplacement, telem_ptr->truck_fp.headOffsetX);
 
-
     // backwards code for trailer
     if (check_max_version(13, 0)) {
-
-
         REGISTER_CHANNEL(TRAILER_CHANNEL_connected, bool, telem_ptr->trailer.trailer[0].com_b.attached);
-
-
         REGISTER_CHANNEL(TRAILER_CHANNEL_world_placement, dplacement, telem_ptr->trailer.trailer[0].com_dp.worldX);
-
         REGISTER_CHANNEL(TRAILER_CHANNEL_local_linear_velocity, fvector,
                          telem_ptr->trailer.trailer[0].com_fv.linearVelocityX);
         REGISTER_CHANNEL(TRAILER_CHANNEL_local_angular_velocity, fvector,
@@ -1031,21 +1012,15 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
             REGISTER_CHANNEL_INDEX(TRAILER_CHANNEL_wheel_susp_deflection, float,
                                    telem_ptr->trailer.trailer[0].com_f.wheelSuspDeflection[i], i);
             REGISTER_CHANNEL_INDEX(TRAILER_CHANNEL_wheel_on_ground, bool,
-                                   telem_ptr->trailer.trailer[0].com_b.wheelOnGround[i], i
-            );
+                                   telem_ptr->trailer.trailer[0].com_b.wheelOnGround[i], i);
             REGISTER_CHANNEL_INDEX(TRAILER_CHANNEL_wheel_substance, u32,
-                                   telem_ptr->trailer.trailer[0].com_ui.wheelSubstance[i], i
-            );
+                                   telem_ptr->trailer.trailer[0].com_ui.wheelSubstance[i], i);
             REGISTER_CHANNEL_INDEX(TRAILER_CHANNEL_wheel_velocity, float,
-                                   telem_ptr->trailer.trailer[0].com_f.wheelVelocity[i], i
-            );
+                                   telem_ptr->trailer.trailer[0].com_f.wheelVelocity[i], i);
             REGISTER_CHANNEL_INDEX(TRAILER_CHANNEL_wheel_steering, float,
-                                   telem_ptr->trailer.trailer[0].com_f.wheelSteering[i], i
-            );
+                                   telem_ptr->trailer.trailer[0].com_f.wheelSteering[i], i);
             REGISTER_CHANNEL_INDEX(TRAILER_CHANNEL_wheel_rotation, float,
-                                   telem_ptr->trailer.trailer[0].com_f.wheelRotation[i], i
-            );
-
+                                   telem_ptr->trailer.trailer[0].com_f.wheelRotation[i], i);
         }
     }
     // new in 1.35 so ets2 1.14 and ats 1.01
@@ -1053,10 +1028,9 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
         // could be loaded don't know actually in the sdk not loaded in ets2 but in ats so may only need to add this and than it should work but need to test this for both
         REGISTER_CHANNEL(JOB_CHANNEL_cargo_damage, float, telem_ptr->job_f.cargoDamage);
 
-        for (auto i = 0; i < 10; i++) {
+        for (auto i = 0; i < 10; ++i) {
             REGISTER_CHANNEL_TRAILER(i, connected, bool, telem_ptr->trailer.trailer[i].com_b.attached);
             REGISTER_CHANNEL_TRAILER(i, cargo.damage, float, telem_ptr->trailer.trailer[i].com_f.cargoDamage);
-
 
             REGISTER_CHANNEL_TRAILER(i, world.placement, dplacement, telem_ptr->trailer.trailer[i].com_dp.worldX);
 
@@ -1068,7 +1042,7 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
             REGISTER_CHANNEL_TRAILER(i, wear.chassis, float, telem_ptr->trailer.trailer[i].com_f.wearChassis);
             REGISTER_CHANNEL_TRAILER(i, wear.wheels, float, telem_ptr->trailer.trailer[i].com_f.wearWheels);
 
-            for (auto j = scs_u32_t(0); j < WHEEL_SIZE; j++) {
+            for (auto j = scs_u32_t(0); j < WHEEL_SIZE; ++j) {
                 REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.suspension.deflection, float, telem_ptr->trailer.trailer[i].com_f.wheelSuspDeflection[j], j);
                 REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.on_ground, bool, telem_ptr->trailer.trailer[i].com_b.wheelOnGround[j], j);
                 REGISTER_CHANNEL_TRAILER_INDEX(i, wheel.substance, u32, telem_ptr->trailer.trailer[i].com_ui.wheelSubstance[j], j);
@@ -1094,7 +1068,7 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
     if (check_min_version(18, 5)) {
         REGISTER_CHANNEL(CHANNEL_multiplayer_time_offset, s32, telem_ptr->multiplayerTimeOffset);
 
-        for (auto i = 0; i < 10; i++) {
+        for (auto i = 0; i < 10; ++i) {
             REGISTER_CHANNEL_TRAILER(i, wear.body, float, telem_ptr->trailer.trailer[i].com_f.wearBody);
         }
     }
@@ -1117,7 +1091,8 @@ SCSAPI_RESULT scs_telemetry_init(const scs_u32_t version, const scs_telemetry_in
  *
  * See scssdk_telemetry.h
  */
-SCSAPI_VOID scs_telemetry_shutdown() {
+SCSAPI_VOID scs_telemetry_shutdown()
+{
 #if LOGGING
     logger::flush();
 #endif
