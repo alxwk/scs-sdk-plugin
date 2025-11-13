@@ -14,8 +14,19 @@
 #endif
 
 class SharedMemory {
-protected:
+public:
+    SharedMemory(const char *newNamePtr, unsigned int size);
+    void Close();
 
+    bool Hooked() const { return isSharedMemoryHooked; }
+    void *GetBuffer() { return pBufferPtr; }
+    void *getPtrAt(int offset) { return (void *) &(((unsigned char *) pBufferPtr)[offset]); }
+    const char *errReason {};
+
+protected:
+    void LogError(const char *logPtr);
+
+private:
     const char *namePtr;
     unsigned int mapsize;
 
@@ -30,22 +41,6 @@ protected:
 #ifdef SHAREDMEM_LOGGING
     FILE *logFilePtr;
 #endif
-
-    void LogError(const char *logPtr);
-
-public:
-    bool Hooked() const { return isSharedMemoryHooked; }
-
-    void *GetBuffer() { return pBufferPtr; }
-
-    SharedMemory(const char *newNamePtr, unsigned int size);
-
-    void Close();
-
-    void *getPtrAt(int offset) { return (void *) &(((unsigned char *) pBufferPtr)[offset]); }
-
-    const char *errReason{};
-
 };
 
 #endif
