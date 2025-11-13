@@ -104,7 +104,7 @@ New stuff is marked with the <ins>inserted</ins> Tag.
 
 <pre>
 
-<strong>Game Values (V.1.11)</strong>:
+<strong>Game Values (V.1.12)</strong>:
 │    ├── Telemetry Timestamp (<mark>not the in-game time</mark>, only for usage in code, see documentation for more information #todo add link) (<mark>now ulong</mark>)
 │    ├── Simulation Timestamp
 │    ├── Render Timestamp
